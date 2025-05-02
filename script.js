@@ -1,150 +1,102 @@
+const API = "https://jogodavelha-api.onrender.com/salas";
+let salaAtual = "";
+let simbolo = "X";
+let estado = Array(9).fill("");
+let terminou = false;
 
-const board = document.getElementById("board");
-const info = document.getElementById("info");
-const restartBtn = document.getElementById("restart");
-const startBtn = document.getElementById("start");
-const toggleThemeBtn = document.getElementById("toggleTheme");
-const clickSound = document.getElementById("clickSound");
-const winSound = document.getElementById("winSound");
-const scoreDisplay = document.getElementById("score");
-const historyList = document.getElementById("history");
-
-let currentPlayer = "x";
-let gameActive = false;
-let gameState = Array(9).fill("");
-let mode = "pvp";
-let playerX = "Jogador X";
-let playerO = "Jogador O";
-let score = { x: 0, o: 0 };
-let history = [];
-
-function createBoard() {
-  board.innerHTML = "";
-  gameState = Array(9).fill("");
-  gameActive = true;
-  for (let i = 0; i < 9; i++) {
-    const cell = document.createElement("div");
-    cell.classList.add("cell");
-    cell.dataset.index = i;
-    cell.addEventListener("click", handleCellClick);
-    board.appendChild(cell);
-  }
-  updateInfo();
+function entrarSala() {
+  salaAtual = document.getElementById("sala").value;
+  if (!salaAtual) return alert("Digite o nome da sala");
+  fetch(API + "/" + salaAtual)
+    .then(res => res.ok ? res.json() : criarSala())
+    .then(data => {
+      estado = data.estado;
+      renderizar();
+    }).catch(() => criarSala());
+  document.getElementById("jogo").classList.remove("d-none");
 }
 
-function updateInfo() {
-  const name = currentPlayer === "x" ? playerX : playerO;
-  info.textContent = `Vez de: ${name}`;
+function criarSala() {
+  fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: salaAtual, estado })
+  });
 }
 
-function handleCellClick(e) {
-  const cell = e.target;
-  const index = cell.dataset.index;
-  if (!gameActive || gameState[index] !== "") return;
-
-  clickSound.play();
-  makeMove(index);
-
-  if (mode === "pvc" && currentPlayer === "o" && gameActive) {
-    setTimeout(() => {
-      const empty = gameState.map((v, i) => v === "" ? i : null).filter(v => v !== null);
-      const aiIndex = empty[Math.floor(Math.random() * empty.length)];
-      makeMove(aiIndex);
-    }, 500);
-  }
+function renderizar() {
+  const tab = document.getElementById("tabuleiro");
+  tab.innerHTML = "";
+  estado.forEach((v, i) => {
+    const c = document.createElement("div");
+    c.className = "celula " + v.toLowerCase();
+    c.textContent = v;
+    c.onclick = () => jogar(i);
+    tab.appendChild(c);
+  });
+  verificarVencedor();
 }
 
-function makeMove(index) {
-  gameState[index] = currentPlayer;
-  const cell = board.children[index];
-  cell.classList.add(currentPlayer);
-  cell.textContent = currentPlayer.toUpperCase();
-
-  if (checkWin()) {
-    winSound.play();
-    gameActive = false;
-    const name = currentPlayer === "x" ? playerX : playerO;
-    alert(`${name} venceu!`);
-    score[currentPlayer]++;
-    history.push(`${name} venceu`);
-    saveData();
-    renderScore();
-    return;
-  }
-
-  if (!gameState.includes("")) {
-    gameActive = false;
-    alert("Empate!");
-    history.push("Empate");
-    saveData();
-    renderScore();
-    return;
-  }
-
-  currentPlayer = currentPlayer === "x" ? "o" : "x";
-  updateInfo();
+function jogar(i) {
+  if (estado[i] || terminou) return;
+  estado[i] = simbolo;
+  simbolo = simbolo === "X" ? "O" : "X";
+  fetch(API + "/" + salaAtual, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ estado })
+  }).then(() => renderizar());
 }
 
-function checkWin() {
-  const wins = [
+function verificarVencedor() {
+  const linhas = [
     [0,1,2],[3,4,5],[6,7,8],
     [0,3,6],[1,4,7],[2,5,8],
     [0,4,8],[2,4,6]
   ];
-  return wins.some(comb => comb.every(i => gameState[i] === currentPlayer));
+  for (let [a,b,c] of linhas) {
+    if (estado[a] && estado[a] === estado[b] && estado[b] === estado[c]) {
+      document.getElementById("mensagem").textContent = `${estado[a]} venceu!`;
+      terminou = true;
+      soltarConfete();
+      return;
+    }
+  }
 }
 
-function renderScore() {
-  scoreDisplay.textContent = `X: ${score.x} | O: ${score.o}`;
-  historyList.innerHTML = history.map(item => `<li class="list-group-item">${item}</li>`).join("");
+function reiniciar() {
+  estado = Array(9).fill("");
+  terminou = false;
+  fetch(API + "/" + salaAtual, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ estado })
+  }).then(() => renderizar());
 }
 
-function saveData() {
-  localStorage.setItem("ttt_score", JSON.stringify(score));
-  localStorage.setItem("ttt_history", JSON.stringify(history));
+function soltarConfete() {
+  const canvas = document.getElementById("confete");
+  const confetti = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const pieces = Array.from({ length: 100 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 6 + 4,
+    c: `hsl(${Math.random() * 360}, 100%, 50%)`,
+    v: Math.random() * 5 + 2
+  }));
+  function draw() {
+    confetti.clearRect(0, 0, canvas.width, canvas.height);
+    for (let p of pieces) {
+      confetti.beginPath();
+      confetti.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      confetti.fillStyle = p.c;
+      confetti.fill();
+      p.y += p.v;
+      if (p.y > canvas.height) p.y = 0;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
 }
-
-function loadData() {
-  const savedScore = JSON.parse(localStorage.getItem("ttt_score"));
-  const savedHistory = JSON.parse(localStorage.getItem("ttt_history"));
-  if (savedScore) score = savedScore;
-  if (savedHistory) history = savedHistory;
-  renderScore();
-}
-
-restartBtn.onclick = createBoard;
-
-startBtn.onclick = () => {
-  playerX = document.getElementById("playerX").value || "Jogador X";
-  playerO = document.getElementById("playerO").value || "Jogador O";
-  mode = document.getElementById("mode").value;
-  currentPlayer = document.getElementById("firstPlayer").value;
-  createBoard();
-};
-
-toggleThemeBtn.onclick = () => {
-  document.body.classList.toggle("light-mode");
-};
-
-loadData();
-
-document.getElementById("themeToggle").addEventListener("click", () => {
-  document.body.classList.toggle("light-mode");
-  document.body.classList.toggle("dark-mode");
-});
-
-// Aplicar tema salvo
-const savedTheme = localStorage.getItem("theme");
-if (savedTheme === "dark") {
-  document.body.classList.add("dark-mode");
-} else {
-  document.body.classList.add("light-mode");
-}
-
-// Alternância de tema
-document.getElementById("themeToggle").addEventListener("click", () => {
-  document.body.classList.toggle("light-mode");
-  document.body.classList.toggle("dark-mode");
-  const isDark = document.body.classList.contains("dark-mode");
-  localStorage.setItem("theme", isDark ? "dark" : "light");
-});

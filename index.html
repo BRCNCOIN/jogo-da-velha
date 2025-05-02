@@ -1,44 +1,26 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jogo da Velha Moderno</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="style.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo da Velha Online</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="light-mode" class="bg-dark text-light text-center p-3">
-  <button id="themeToggle" class="btn btn-secondary mb-3 float-end">Alternar Tema</button>
-<div class="container">
-    <h1 class="mb-4">🎮 Jogo da Velha</h1>
+<body>
+  <div class="container py-5 text-center">
+    <h1 class="mb-4">Jogo da Velha Online 🎮</h1>
     <div class="mb-3">
-      <input type="text" id="playerX" class="form-control mb-2" placeholder="Nome do Jogador X" />
-      <input type="text" id="playerO" class="form-control mb-2" placeholder="Nome do Jogador O / IA" />
-      <select id="mode" class="form-select mb-2">
-        <option value="pvp">Player vs Player</option>
-        <option value="pvc">Player vs Computador</option>
-      </select>
-      <select id="firstPlayer" class="form-select mb-3">
-        <option value="x">Começa: X</option>
-        <option value="o">Começa: O</option>
-      </select>
-      <button id="start" class="btn btn-success mb-3">🚀 Iniciar Jogo</button>
+      <input type="text" id="sala" class="form-control" placeholder="Digite o nome da sala">
     </div>
-    <div id="info" class="mb-2 fw-bold"></div>
-    <div id="board" class="board mx-auto mb-3"></div>
-    <div>
-      <button id="restart" class="btn btn-warning">🔁 Reiniciar</button>
-      <button id="toggleTheme" class="btn btn-secondary">🌓 Tema</button>
-    </div>
-    <div class="mt-4">
-      <h5>Placar</h5>
-      <p id="score">X: 0 | O: 0</p>
-      <h6>Histórico</h6>
-      <ul id="history" class="list-group"></ul>
+    <button class="btn btn-primary mb-4" onclick="entrarSala()">Entrar na Sala</button>
+    <div id="jogo" class="d-none">
+      <div id="tabuleiro" class="grid"></div>
+      <p id="mensagem" class="mt-3 fw-bold fs-5"></p>
+      <button class="btn btn-secondary mt-3" onclick="reiniciar()">Reiniciar</button>
     </div>
   </div>
-  <audio id="clickSound" src="click.mp3" preload="auto"></audio>
-  <audio id="winSound" src="win.mp3" preload="auto"></audio>
+  <canvas id="confete"></canvas>
   <script src="script.js"></script>
 </body>
 </html>

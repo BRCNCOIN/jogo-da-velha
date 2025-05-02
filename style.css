@@ -1,78 +1,30 @@
-
-body.light-mode {
-  background-color: #f8f9fa;
-  color: #212529;
+body {
+  background: linear-gradient(to right, #00b4db, #0083b0);
+  color: white;
+  font-family: sans-serif;
 }
 
-.board {
+.grid {
   display: grid;
   grid-template-columns: repeat(3, 100px);
   gap: 10px;
   justify-content: center;
+  margin-top: 20px;
 }
 
-.cell {
+.celula {
   width: 100px;
   height: 100px;
-  background-color: #212529;
-  border: 2px solid #0d6efd;
+  background: white;
+  color: #333;
+  font-size: 3em;
+  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
-  font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #0004;
 }
-
-.cell.x {
-  color: #ff3860;
-  text-shadow: 0 0 10px #ff3860, 0 0 20px #ff3860;
-}
-
-.cell.o {
-  color: #00d1b2;
-  text-shadow: 0 0 10px #00d1b2, 0 0 20px #00d1b2;
-}
-
-.cell:hover {
-  background-color: #343a40;
-  transform: scale(1.05);
-}
-
-#score {
-  font-size: 1.25rem;
-  color: gold;
-  font-weight: bold;
-}
-
-#history {
-  max-height: 150px;
-  overflow-y: auto;
-  margin-top: 10px;
-}
-
-.btn {
-  font-weight: bold;
-}
-
-
-body.dark-mode {
-  background-color: #121212;
-  color: #f1f1f1;
-}
-
-body.dark-mode .cell {
-  background-color: #1f1f1f;
-  border-color: #0d6efd;
-}
-
-body.dark-mode .cell.x {
-  color: #ff6b81;
-  text-shadow: 0 0 10px #ff6b81, 0 0 20px #ff6b81;
-}
-
-body.dark-mode .cell.o {
-  color: #1de9b6;
-  text-shadow: 0 0 10px #1de9b6, 0 0 20px #1de9b6;
-}
+.celula.x { color: #ff4081; }
+.celula.o { color: #00e676; }
