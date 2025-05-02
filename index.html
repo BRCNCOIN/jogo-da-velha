@@ -70,5 +70,20 @@
       🎨 Trocar Tema
     </button>
     
+
+<div id="chatContainer" class="position-fixed bottom-0 end-0 m-3 p-2 bg-light border rounded shadow" style="width: 250px; max-height: 300px; overflow-y: auto; z-index: 999;">
+  <div id="chatMessages" style="height: 200px; overflow-y: auto; font-size: 0.9rem;"></div>
+  <input type="text" id="chatInput" class="form-control form-control-sm mt-2" placeholder="Digite sua mensagem...">
+</div>
+
+
+<div id="chatContainer" class="position-fixed bottom-0 end-0 m-3 p-2 bg-light border rounded shadow" style="width: 250px; max-height: 300px; overflow-y: auto; z-index: 999;">
+  <div id="chatMessages" style="height: 200px; overflow-y: auto; font-size: 0.9rem;"></div>
+  <div class="input-group input-group-sm mt-2">
+    <input type="text" id="chatInput" class="form-control" placeholder="Mensagem ou emoji...">
+    <button class="btn btn-primary" id="chatSend">Enviar</button>
+  </div>
+</div>
+
 </body>
 </html>
