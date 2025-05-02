@@ -1,69 +1,77 @@
-const socket = io("https://jogo-da-velha-api.onrender.com"); // <-- substitua depois
-let simbolo = "X", jogando = true;
+const socket = io("https://jogo-da-velha-api.onrender.com"); // Altere se necessário
+let simbolo = "";
+let salaAtual = "";
 
-const form = document.getElementById("formulario");
-const jogo = document.getElementById("jogo");
-const erro = document.getElementById("erro");
-const info = document.getElementById("info");
-const tabuleiro = document.getElementById("tabuleiro");
-const placarEl = document.getElementById("placar");
+const casas = Array.from({ length: 9 }, (_, i) => {
+  const div = document.createElement("div");
+  div.className = "casa";
+  div.dataset.index = i;
+  div.onclick = () => socket.emit("jogada", { sala: salaAtual, index: i });
+  return div;
+});
 
-function entrar() {
+document.getElementById("tabuleiro").append(...casas);
+
+document.getElementById("form-sala").onsubmit = (e) => {
+  e.preventDefault();
   const nome = document.getElementById("nome").value;
   const sala = document.getElementById("sala").value;
   const senha = document.getElementById("senha").value;
-  if (!nome || !sala || !senha) return;
-  simbolo = "X";
-  socket.emit("entrar", { nome, sala, senha });
-}
+  salaAtual = sala;
+  socket.emit("entrarNaSala", { sala, senha, nome });
+};
 
-socket.on("erro", msg => erro.innerText = msg);
-
-socket.on("atualizar", ({ estado, placar }) => {
-  form.style.display = "none";
-  jogo.style.display = "block";
-  erro.innerText = "";
-  renderizarTabuleiro(estado);
-  renderizarPlacar(placar);
+socket.on("simbolo", (s) => {
+  simbolo = s;
+  document.getElementById("info").textContent = `Você é: ${simbolo}`;
 });
 
-function renderizarTabuleiro(estado) {
-  tabuleiro.innerHTML = "";
+socket.on("estado", (estado) => {
   estado.forEach((val, i) => {
-    const casa = document.createElement("div");
-    casa.className = "casa" + (val === "O" ? " o" : "");
-    casa.innerText = val;
-    casa.onclick = () => {
-      if (!val && jogando) {
-        socket.emit("jogada", { index: i, simbolo });
-        simbolo = simbolo === "X" ? "O" : "X";
-      }
-    };
-    tabuleiro.appendChild(casa);
+    casas[i].textContent = val;
+    casas[i].style.color = val === "X" ? "#0cf" : "#fc0";
+  });
+  verificarVencedor(estado);
+});
+
+socket.on("jogadores", (lista) => {
+  if (lista.length === 2) {
+    document.getElementById("turno").textContent = `Vez de: ${lista[0].simbolo === simbolo ? lista[1].nome : lista[0].nome}`;
+  }
+});
+
+socket.on("erro", (msg) => {
+  alert(msg);
+});
+
+function verificarVencedor(estado) {
+  const linhas = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+  for (let l of linhas) {
+    const [a, b, c] = l;
+    if (estado[a] && estado[a] === estado[b] && estado[b] === estado[c]) {
+      l.forEach(i => casas[i].classList.add("vencedor"));
+      confete();
+    }
+  }
+}
+
+function confete() {
+  const canvas = document.createElement("canvas");
+  canvas.style.position = "fixed";
+  canvas.style.top = "0";
+  canvas.style.left = "0";
+  canvas.style.width = "100%";
+  canvas.style.height = "100%";
+  canvas.style.pointerEvents = "none";
+  canvas.id = "confetti";
+  document.body.append(canvas);
+  import("https://cdn.skypack.dev/canvas-confetti").then(mod => {
+    const confetti = mod.default;
+    confetti({ particleCount: 150, spread: 80 });
+    setTimeout(() => canvas.remove(), 3000);
   });
 }
-
-function renderizarPlacar(placar) {
-  placarEl.innerHTML = "";
-  for (const [nome, pontos] of Object.entries(placar)) {
-    const item = document.createElement("li");
-    item.className = "list-group-item";
-    item.innerText = `${nome}: ${pontos}`;
-    placarEl.appendChild(item);
-  }
-}
-
-function reiniciar() {
-  socket.emit("reiniciar");
-}
-
-// 🎨 Troca de tema
-document.getElementById("themeSelector").addEventListener("change", function () {
-  const theme = this.value;
-  document.body.classList.remove("theme-dark", "theme-neon");
-  if (theme === "dark") {
-    document.body.classList.add("theme-dark");
-  } else if (theme === "neon") {
-    document.body.classList.add("theme-neon");
-  }
-});
