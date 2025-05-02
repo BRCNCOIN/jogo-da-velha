@@ -1,42 +1,50 @@
-# 🕹️ Jogo da Velha - Multiplayer Online
+# 🎮 Jogo da Velha - Multiplayer Online (Frontend)
 
-Uma versão moderna e online do clássico jogo da velha, com suporte para salas, senha, troca de tema e efeitos visuais!
+Este é o frontend completo do jogo da velha multiplayer com todos os recursos integrados.
 
 ## ✅ Funcionalidades
 
-- 👥 Jogo multiplayer em tempo real via WebSocket
-- 🏷️ Criação de salas com senha (opcional)
-- 🎨 Modo claro e escuro com botão de troca de tema
-- ❓ Ajuda com instruções visuais na interface
-- 🎉 Efeitos visuais ao vencer: fogos e destaque da linha vencedora
-- ⚡ Interface responsiva com Bootstrap
+- 👥 Multiplayer com suporte a salas e nomes personalizados
+- 🔒 Salas com senha (implementado no backend)
+- 💬 Chat com:
+  - Envio de mensagens e emojis (`:D`, `:fire:`, `<3`)
+  - Stickers (🔥 😂 👍)
+  - Botão de envio
+  - Som ao receber mensagens
+- 🎨 Temas:
+  - Fundo animado que muda automaticamente
+  - Botão para troca manual de tema
+- 🎉 Animações ao vencer
+- 🌐 Responsivo e moderno com Bootstrap 5
 
-## 🚀 Como jogar
-
-1. Acesse o site hospedado ou abra `index.html`
-2. Digite seu nome e o nome de uma sala (pode inventar)
-3. Compartilhe os dados com outra pessoa para jogarem juntos
-4. O primeiro a completar 3 símbolos em linha vence!
-
-## 🧑‍💻 Tecnologias usadas
+## 🧠 Tecnologias
 
 - HTML5 + CSS3
-- Bootstrap 5
-- JavaScript
+- JavaScript (vanilla)
 - WebSocket (via socket.io)
-- Hospedagem: GitHub Pages (frontend) + Render (backend)
+- Bootstrap 5
 
-## 🗂️ Estrutura
+## 🚀 Como usar
 
-- `index.html`: página principal
-- `script.js`: lógica do jogo e comunicação
-- `README.md`: este arquivo
+1. Suba os arquivos no GitHub
+2. Ative o GitHub Pages (branch `main`, pasta `/`)
+3. Certifique-se de que o `script.js` aponta para o backend Render:
 
-## 🛠️ Backend
+```js
+const socket = io("https://jogo-da-velha-api.onrender.com");
+```
 
-O backend WebSocket está em um repositório separado e é hospedado em:  
-👉 [`https://jogo-da-velha-api.onrender.com`](https://jogo-da-velha-api.onrender.com)
+> Altere a URL se necessário!
+
+## 📂 Estrutura
+
+- `index.html`: interface principal
+- `script.js`: lógica de comunicação e interface
+- `style.css`: estilos e animações
+- `audio/chat.mp3`: som do chat
+- `stickers/`: imagens para emojis gráficos
+- `README.md`: instruções
 
 ---
 
-💡 Projeto educacional com foco em interatividade, design e multiplayer online.
+Feito com 💙 para diversão e aprendizado!
