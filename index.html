@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jogo da Velha Online</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jogo da Velha Multiplayer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container py-5 text-center">
-    <h1 class="mb-4">Jogo da Velha Online 🎮</h1>
-    <div class="mb-3">
-      <input type="text" id="sala" class="form-control" placeholder="Digite o nome da sala">
-    </div>
-    <button class="btn btn-primary mb-4" onclick="entrarSala()">Entrar na Sala</button>
+  <div class="container py-4 text-center">
+    <h1 class="mb-3">🎮 Jogo da Velha Multiplayer</h1>
+    <input type="text" id="nome" class="form-control mb-2" placeholder="Seu nome" />
+    <input type="text" id="sala" class="form-control mb-2" placeholder="Nome da sala" />
+    <input type="password" id="senha" class="form-control mb-2" placeholder="Senha da sala" />
+    <button class="btn btn-success mb-4" onclick="entrarSala()">Entrar</button>
     <div id="jogo" class="d-none">
-      <div id="tabuleiro" class="grid"></div>
-      <p id="mensagem" class="mt-3 fw-bold fs-5"></p>
+      <h4 id="placar" class="mb-3 text-light"></h4>
+      <div id="tabuleiro" class="grid mx-auto"></div>
+      <p id="mensagem" class="mt-3 fs-5 fw-bold text-white"></p>
       <button class="btn btn-secondary mt-3" onclick="reiniciar()">Reiniciar</button>
     </div>
   </div>
