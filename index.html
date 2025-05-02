@@ -2,88 +2,85 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jogo da Velha - Multiplayer Online</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jogo da Velha</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <style>
-    body { background: var(--bg, #222); color: var(--fg, #fff); text-align: center; padding-top: 20px; transition: 0.3s; }
-    .tabuleiro { display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; justify-content: center; margin-top: 20px; }
-    .casa { width: 100px; height: 100px; font-size: 2.5rem; display: flex; justify-content: center; align-items: center; background: #444; border-radius: 10px; cursor: pointer; transition: 0.3s; }
-    .casa:hover { background: #666; }
-    .vencedor { background-color: #0f0 !important; }
-    .tema-btn { position: fixed; top: 10px; right: 10px; }
+    body {
+      background: linear-gradient(to right, #667eea, #764ba2);
+      color: white;
+      text-align: center;
+      padding-top: 100px;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .modo-btn {
+      font-size: 1.5rem;
+      padding: 1rem 2rem;
+      margin: 1rem;
+      border-radius: 15px;
+      width: 250px;
+    }
+  </style>
+
+  <audio id="modoAudio" src="audio/click.mp3" preload="auto"></audio>
+  <style>
+    .modo-btn:hover {
+      transform: scale(1.05);
+      transition: transform 0.2s ease;
+    }
+  </style>
+
+  <style>
+    #loader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      z-index: 9999;
+    }
+    body.fade {
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
   </style>
 </head>
-<body>
+
+
+<body class="fade">
   <div class="container">
-    <button class="btn btn-outline-light tema-btn" onclick="alternarTema()">🎨 Tema</button>
-    <h1>Jogo da Velha - Multiplayer Online 🎮</h1>
-
-    <div class="alert alert-info mt-3">
-      <strong>Como jogar?</strong> <br />
-      Digite seu nome, o nome da sala (pode ser qualquer palavra) e uma senha opcional.<br />
-      Compartilhe esses dados com outra pessoa para jogarem juntos em tempo real!
+    <h1 class="mb-4">🎮 Jogo da Velha</h1>
+    <h3>Escolha o modo de jogo:</h3>
+    <div class="d-flex flex-column align-items-center">
+      <a href="local.html" class="btn btn-success modo-btn">🧑‍🤝‍🧑 Jogar Local</a>
+      <a href="online.html" class="btn btn-primary modo-btn">🌐 Multiplayer Online</a>
     </div>
-
-    <form id="form-sala" class="row g-2 justify-content-center">
-      <div class="col-auto"><input type="text" id="nome" class="form-control" placeholder="Seu nome" required></div>
-      <div class="col-auto"><input type="text" id="sala" class="form-control" placeholder="Sala" required></div>
-      <div class="col-auto"><input type="password" id="senha" class="form-control" placeholder="Senha (opcional)"></div>
-      <div class="col-auto"><button class="btn btn-primary" type="submit">Entrar</button></div>
-    </form>
-
-    <div class="mt-3">
-      <button class="btn btn-outline-info" onclick="mostrarAjuda()">❓ Ajuda</button>
-    </div>
-
-    <div id="ajuda" class="alert alert-warning mt-3 d-none">
-      Dois jogadores podem jogar juntos em tempo real.<br />
-      Clique em uma célula para marcar com seu símbolo (X ou O).<br />
-      Quem formar primeiro uma linha com 3 marcas vence!
-    </div>
-
-    <h4 id="info" class="mt-4"></h4>
-    <div id="tabuleiro" class="tabuleiro mt-3"></div>
-    <h5 id="turno" class="mt-3"></h5>
   </div>
 
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <script src="script.js"></script>
-  <script>
-    function mostrarAjuda() {
-      const ajuda = document.getElementById("ajuda");
-      ajuda.classList.toggle("d-none");
-    }
+<script>
+  const modoBtns = document.querySelectorAll(".modo-btn");
+  const clickSound = document.getElementById("modoAudio");
 
-    function alternarTema() {
-      if (document.body.style.getPropertyValue('--bg') === '#222') {
-        document.body.style.setProperty('--bg', '#fff');
-        document.body.style.setProperty('--fg', '#000');
-      } else {
-        document.body.style.setProperty('--bg', '#222');
-        document.body.style.setProperty('--fg', '#fff');
-      }
-    }
-  </script>
+  modoBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      clickSound.currentTime = 0;
+      clickSound.play();
+    });
+  });
+</script>
 
-    <button id="themeToggle" class="btn btn-warning position-fixed top-0 end-0 m-3 z-3">
-      🎨 Trocar Tema
-    </button>
-    
-
-<div id="chatContainer" class="position-fixed bottom-0 end-0 m-3 p-2 bg-light border rounded shadow" style="width: 250px; max-height: 300px; overflow-y: auto; z-index: 999;">
-  <div id="chatMessages" style="height: 200px; overflow-y: auto; font-size: 0.9rem;"></div>
-  <input type="text" id="chatInput" class="form-control form-control-sm mt-2" placeholder="Digite sua mensagem...">
-</div>
-
-
-<div id="chatContainer" class="position-fixed bottom-0 end-0 m-3 p-2 bg-light border rounded shadow" style="width: 250px; max-height: 300px; overflow-y: auto; z-index: 999;">
-  <div id="chatMessages" style="height: 200px; overflow-y: auto; font-size: 0.9rem;"></div>
-  <div class="input-group input-group-sm mt-2">
-    <input type="text" id="chatInput" class="form-control" placeholder="Mensagem ou emoji...">
-    <button class="btn btn-primary" id="chatSend">Enviar</button>
-  </div>
-</div>
-
+<div id="loader">🎮 Carregando...</div>
+<script>
+  window.addEventListener("load", () => {
+    document.body.classList.remove("fade");
+    document.getElementById("loader").style.display = "none";
+  });
+</script>
 </body>
+
+
 </html>
