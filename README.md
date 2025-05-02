@@ -1,47 +1,61 @@
-# 🎮 Jogo da Velha Moderno
+# 🕹️ Jogo da Velha Multiplayer com Salas e Tema
 
-Um jogo da velha (tic-tac-toe) feito com **HTML5**, **CSS**, **Bootstrap 5** e JavaScript. Totalmente responsivo, com efeitos modernos e confetes para comemorar a vitória! 🥳
+Este projeto é uma versão moderna e multiplayer do Jogo da Velha, com suporte a **salas protegidas por senha**, **jogadas em tempo real via WebSocket** e interface moderna com **temas, ajuda interativa e cores vibrantes**.
 
-## ✨ Recursos
-
-- ✅ Interface moderna e responsiva
-- ❌❗ Bolinhas e X coloridos e grandes
-- 🎆 Fogos de artifício ao vencer
-- 📏 Linha traçada sobre a sequência vencedora
-- 🔁 Botão de reinício
-- 🌈 Cores vibrantes com gradiente
-
-## 📷 Prévia
-
-![preview](https://user-images.githubusercontent.com/yourusername/seu-preview.png)
-
-## 🚀 Como usar
-
-1. Baixe o projeto ou clone o repositório:
-
-```bash
-git clone https://github.com/seu-usuario/jogo-da-velha.git
-cd jogo-da-velha
-```
-
-2. Abra o arquivo `index.html` no navegador ou publique no GitHub Pages.
-
-## 📡 Publicação no GitHub Pages
-
-- Vá em **Settings > Pages**
-- Selecione a branch `main` e a pasta `/root`
-- O link será algo como:  
-  `https://seu-usuario.github.io/jogo-da-velha/`
+---
 
 ## 📁 Estrutura
 
-```
-jogo-da-velha/
-│
-├── index.html       # Página principal do jogo
-├── README.md        # Este arquivo
-```
+- `frontend/`: Interface do jogo para o usuário final (HTML5 + Bootstrap + Socket.io)
+- `backend/`: Servidor WebSocket com suporte a múltiplas salas (Node.js + Express + Socket.io)
 
-## 🧑‍💻 Autor
+---
 
-Feito com ❤️ por [Seu Nome](https://github.com/seu-usuario)
+## 🚀 Como usar
+
+### 🔧 Backend (Render.com)
+
+1. Crie um novo serviço **Web Service** no [Render.com](https://render.com).
+2. Faça upload da pasta `backend/` ou envie para um repositório Git.
+3. Defina o comando de inicialização como:
+
+   ```
+   npm install && npm start
+   ```
+
+4. O servidor será iniciado na porta que o Render definir (Render usa automaticamente `process.env.PORT`).
+
+---
+
+### 🌐 Frontend (GitHub Pages ou servidor próprio)
+
+1. Faça upload da pasta `frontend/` em um repositório no GitHub.
+2. Ative o GitHub Pages apontando para a pasta principal (root).
+3. O arquivo `script.js` já está configurado para conectar no servidor Render (`https://jogo-da-velha-api.onrender.com`).
+
+---
+
+## ✅ Recursos
+
+- Salas privadas com senha
+- Jogadas em tempo real com WebSocket
+- Bootstrap 5 e estilo responsivo
+- Placar por jogador
+- Interface moderna com efeito visual
+- 🎨 **Seletor de temas** (Claro, Escuro, Neon)
+- 📘 **Ajuda interativa** com instruções dentro do site
+- ✨ **Cores vibrantes e animações**
+- 🎆 **Fogos e confete quando alguém vence**
+
+---
+
+## 💡 Sugestões de melhorias
+
+- Adicionar chat nas salas
+- Mostrar jogadores online
+- Criar leaderboard global
+- Salvar histórico de partidas
+
+---
+
+Feito com ❤️ para diversão!
