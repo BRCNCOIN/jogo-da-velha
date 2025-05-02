@@ -1,117 +1,58 @@
-const API = "https://jogodavelha-api.onrender.com/salas";
-let salaAtual = "", nomeJogador = "", senhaSala = "", simbolo = "X", terminou = false;
-let estado = Array(9).fill(""), placar = {};
+const socket = io("https://jogo-da-velha-api.onrender.com"); // <-- substitua depois
+let simbolo = "X", jogando = true;
 
-function entrarSala() {
-  nomeJogador = document.getElementById("nome").value.trim();
-  salaAtual = document.getElementById("sala").value.trim();
-  senhaSala = document.getElementById("senha").value.trim();
-  if (!nomeJogador || !salaAtual || !senhaSala) return alert("Preencha nome, sala e senha");
-  fetch(`${API}/${salaAtual}`)
-    .then(res => res.ok ? res.json() : criarSala())
-    .then(data => {
-      if (data.senha && data.senha !== senhaSala) return alert("Senha incorreta");
-      estado = data.estado;
-      placar = data.placar || {};
-      if (!placar[nomeJogador]) placar[nomeJogador] = 0;
-      renderizar();
-    }).catch(() => criarSala());
-  document.getElementById("jogo").classList.remove("d-none");
+const form = document.getElementById("formulario");
+const jogo = document.getElementById("jogo");
+const erro = document.getElementById("erro");
+const info = document.getElementById("info");
+const tabuleiro = document.getElementById("tabuleiro");
+const placarEl = document.getElementById("placar");
+
+function entrar() {
+  const nome = document.getElementById("nome").value;
+  const sala = document.getElementById("sala").value;
+  const senha = document.getElementById("senha").value;
+  if (!nome || !sala || !senha) return;
+  simbolo = "X";
+  socket.emit("entrar", { nome, sala, senha });
 }
 
-function criarSala() {
-  placar = { [nomeJogador]: 0 };
-  fetch(API, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ id: salaAtual, estado, placar, senha: senhaSala })
+socket.on("erro", msg => erro.innerText = msg);
+
+socket.on("atualizar", ({ estado, placar }) => {
+  form.style.display = "none";
+  jogo.style.display = "block";
+  erro.innerText = "";
+  renderizarTabuleiro(estado);
+  renderizarPlacar(placar);
+});
+
+function renderizarTabuleiro(estado) {
+  tabuleiro.innerHTML = "";
+  estado.forEach((val, i) => {
+    const casa = document.createElement("div");
+    casa.className = "casa" + (val === "O" ? " o" : "");
+    casa.innerText = val;
+    casa.onclick = () => {
+      if (!val && jogando) {
+        socket.emit("jogada", { index: i, simbolo });
+        simbolo = simbolo === "X" ? "O" : "X";
+      }
+    };
+    tabuleiro.appendChild(casa);
   });
 }
 
-function renderizar() {
-  const tab = document.getElementById("tabuleiro");
-  tab.innerHTML = "";
-  estado.forEach((v, i) => {
-    const c = document.createElement("div");
-    c.className = "celula " + v.toLowerCase();
-    c.textContent = v;
-    c.onclick = () => jogar(i);
-    tab.appendChild(c);
-  });
-  atualizarPlacar();
-  verificarVencedor();
-}
-
-function jogar(i) {
-  if (estado[i] || terminou) return;
-  estado[i] = simbolo;
-  simbolo = simbolo === "X" ? "O" : "X";
-  fetch(`${API}/${salaAtual}`, {
-    method: "PATCH",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ estado })
-  }).then(() => renderizar());
-}
-
-function verificarVencedor() {
-  const linhas = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],
-                  [1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-  for (let [a,b,c] of linhas) {
-    if (estado[a] && estado[a] === estado[b] && estado[b] === estado[c]) {
-      document.getElementById("mensagem").textContent = `${estado[a]} venceu!`;
-      terminou = true;
-      placar[nomeJogador] = (placar[nomeJogador] || 0) + 1;
-      fetch(`${API}/${salaAtual}`, {
-        method: "PATCH",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ placar })
-      });
-      soltarConfete();
-      atualizarPlacar();
-      return;
-    }
+function renderizarPlacar(placar) {
+  placarEl.innerHTML = "";
+  for (const [nome, pontos] of Object.entries(placar)) {
+    const item = document.createElement("li");
+    item.className = "list-group-item";
+    item.innerText = `${nome}: ${pontos}`;
+    placarEl.appendChild(item);
   }
-}
-
-function atualizarPlacar() {
-  const p = Object.entries(placar).map(([jogador, pontos]) =>
-    `${jogador}: ${pontos}`).join(" | ");
-  document.getElementById("placar").textContent = "Placar - " + p;
 }
 
 function reiniciar() {
-  estado = Array(9).fill("");
-  terminou = false;
-  fetch(`${API}/${salaAtual}`, {
-    method: "PATCH",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ estado })
-  }).then(() => renderizar());
-}
-
-function soltarConfete() {
-  const canvas = document.getElementById("confete");
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  const confetes = Array.from({ length: 150 }, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 6 + 2,
-    c: `hsl(${Math.random()*360},100%,50%)`,
-    v: Math.random() * 5 + 2
-  }));
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let p of confetes) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
-      ctx.fillStyle = p.c;
-      ctx.fill();
-      p.y += p.v;
-      if (p.y > canvas.height) p.y = 0;
-    }
-    requestAnimationFrame(draw);
-  }
-  draw();
+  socket.emit("reiniciar");
 }
