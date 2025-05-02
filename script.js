@@ -75,3 +75,35 @@ function confete() {
     setTimeout(() => canvas.remove(), 3000);
   });
 }
+
+
+
+// 🎨 Temas dinâmicos de fundo a cada 5 minutos
+const backgroundThemes = [
+  "bg-theme-1", "bg-theme-2", "bg-theme-3", "bg-theme-4"
+];
+
+let currentThemeIndex = 0;
+
+function rotateBackgroundTheme() {
+  document.body.classList.remove(...backgroundThemes);
+  currentThemeIndex = (currentThemeIndex + 1) % backgroundThemes.length;
+  document.body.classList.add(backgroundThemes[currentThemeIndex]);
+}
+
+// Inicia a rotação
+setInterval(rotateBackgroundTheme, 300000); // 5 minutos
+rotateBackgroundTheme();
+
+
+
+// 🎛️ Botão para trocar tema manualmente
+const themeToggleBtn = document.getElementById("themeToggle");
+
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener("click", () => {
+    document.body.classList.remove(...backgroundThemes);
+    currentThemeIndex = (currentThemeIndex + 1) % backgroundThemes.length;
+    document.body.classList.add(backgroundThemes[currentThemeIndex]);
+  });
+}

@@ -28,3 +28,11 @@ body {
 }
 .celula.x { color: #ff4081; }
 .celula.o { color: #00e676; }
+
+
+
+/* 🎨 Temas vibrantes para fundo */
+.bg-theme-1 { background: linear-gradient(45deg, #ff9a9e, #fad0c4); }
+.bg-theme-2 { background: linear-gradient(45deg, #a1c4fd, #c2e9fb); }
+.bg-theme-3 { background: linear-gradient(45deg, #fbc2eb, #a6c1ee); }
+.bg-theme-4 { background: linear-gradient(45deg, #fddb92, #d1fdff); }
