@@ -127,3 +127,24 @@ toggleThemeBtn.onclick = () => {
 };
 
 loadData();
+
+document.getElementById("themeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("light-mode");
+  document.body.classList.toggle("dark-mode");
+});
+
+// Aplicar tema salvo
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme === "dark") {
+  document.body.classList.add("dark-mode");
+} else {
+  document.body.classList.add("light-mode");
+}
+
+// Alternância de tema
+document.getElementById("themeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("light-mode");
+  document.body.classList.toggle("dark-mode");
+  const isDark = document.body.classList.contains("dark-mode");
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+});
