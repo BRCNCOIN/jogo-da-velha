@@ -56,3 +56,14 @@ function renderizarPlacar(placar) {
 function reiniciar() {
   socket.emit("reiniciar");
 }
+
+// 🎨 Troca de tema
+document.getElementById("themeSelector").addEventListener("change", function () {
+  const theme = this.value;
+  document.body.classList.remove("theme-dark", "theme-neon");
+  if (theme === "dark") {
+    document.body.classList.add("theme-dark");
+  } else if (theme === "neon") {
+    document.body.classList.add("theme-neon");
+  }
+});
